@@ -55,7 +55,8 @@ map_data.txt includes the position of landmarks (in meters) on an arbitrary Cart
 - y position<br/> 
 - landmark id<br/> 
 
-Below is possible see the first 5 rows from [map_data.txt](./data/map_data.txt): 
+Below is possible see the first 5 rows from [map_data.txt](./data/map_data.txt):
+
 ![alt text][image1]
 
 In the next picture we have the data in the 2D cartesian chart: 
