@@ -307,7 +307,6 @@ void ParticleFilter::resample() {
   weights.clear();    
 }
 
-}
 
 void ParticleFilter::SetAssociations(Particle& particle, 
                                      const vector<int>& associations, 
