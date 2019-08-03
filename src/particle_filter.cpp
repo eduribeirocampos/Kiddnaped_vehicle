@@ -85,20 +85,20 @@ void ParticleFilter::prediction(double delta_t, double std_pos[],
 		//Getting the variables:  
 		double initial_x_position = particles[i].x;
 		double initial_y_position = particles[i].y;
-		double initial_yaw_rate = particles[i].theta;
+		double initial_yaw = particles[i].theta;
 		double final_x_position;
 		double final_y_position;
 		double final_yaw; 
       
 		if((abs(yaw_rate)) < minimum_yaw_rate){
-			final_x_position = initial_x_position + velocity * delta_t * cos(initial_yaw_rate);
-			final_y_position = initial_y_position + velocity * delta_t * sin(initial_yaw_rate);
-			final_yaw = initial_yaw_rate;
+			final_x_position = initial_x_position + velocity * delta_t * cos(initial_yaw);
+			final_y_position = initial_y_position + velocity * delta_t * sin(initial_yaw);
+			final_yaw = initial_yaw;
 		}
 		else{
-			final_x_position = initial_x_position + (velocity / yaw_rate )*(sin(initial_yaw_rate + yaw_rate * delta_t)-sin(yaw_rate));
-			final_y_position = initial_y_position + (velocity / yaw_rate )*(cos(yaw_rate)-cos(initial_yaw_rate + yaw_rate * delta_t));
-			final_yaw = initial_yaw_rate + yaw_rate * delta_t;      
+			final_x_position = initial_x_position + (velocity / yaw_rate )*(sin(initial_yaw + yaw_rate * delta_t)-sin(yaw_rate));
+			final_y_position = initial_y_position + (velocity / yaw_rate )*(cos(yaw_rate)-cos(initial_yaw + yaw_rate * delta_t));
+			final_yaw = initial_yaw + yaw_rate * delta_t;      
 		}  
 		// Updating values.
 		particles[i].x = final_x_position ;
@@ -126,12 +126,13 @@ void ParticleFilter::dataAssociation(vector<LandmarkObs> predicted,
    // according to the map_data the biggest distance possible could be found with the hypotenuse from the grid limits
    // X = 350 , Y = 175 picture available in the README file  
     
-	double landmark_min_distance = sqrt(pow(350,2) + pow(175,2));
+	
   
 	for (float i = 0 ; i < observations.size(); i++){
     //for(vector<float>::size_type i = 0; i < observations.size(); i++){
 		float x_coord_observed = observations[i].x;
 		float y_coord_observed = observations[i].y;
+		double landmark_min_distance = sqrt(pow(350,2) + pow(175,2));
 
 		for (float j = 0 ; j < predicted.size(); j++){
 		//for(vector<float>::size_type j = 0; i < predicted.size(); j++){
@@ -251,8 +252,8 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 					}                  
 				}                  
 			}              
-		particles[i].weight = weight_particle;
-		}              
+		}   	
+	particles[i].weight = weight_particle;	
 	}
 }  
   
@@ -264,22 +265,47 @@ void ParticleFilter::resample() {
    *   http://en.cppreference.com/w/cpp/numeric/random/discrete_distribution
    */
 
-	for ( int i = 0 ; i < num_particles ;i++){ 
-      weights.push_back(particles[i].weight);
-     }
+    default_random_engine gen;
   
+     // appending the particles weights in the main weights vector  
+	for ( int i = 0 ; i < num_particles ;i++){ 
+      		weights.push_back(particles[i].weight);
+     }
+   // Calculating the total sum for main weights vector in order to normalize the individual particles weight
    double partial_value;
    for (size_t i = 0; i < weights.size();i++){
      double ind_weight = weights[i];
      partial_value += ind_weight;
     }
+	// normalizing the particles weight
     double sum_weights = partial_value;
 	for ( int i = 0 ; i < num_particles;i++){ 
       particles[i].weight /= sum_weights ;
-     }
+     } 
+  
+	// Appending the normalized weights in an unique vector.
+	vector<double> main_weights_normalized;  
+	for ( int i = 0 ; i < num_particles ;i++){ 
+       main_weights_normalized.push_back(particles[i].weight);  
+    }
+  // generate distribution according to normalized weights.  
+  std::discrete_distribution <int> dist(main_weights_normalized.begin(), main_weights_normalized.end());
 
-  // clear the weight vector
-	weights.clear();  
+  // create resampled particles
+  vector<Particle> resampled_particles;
+
+  // resample the particles according to weights
+  for(int i=0; i < num_particles; i++){
+    int idx = dist(gen);
+    resampled_particles.push_back(particles[idx]);
+  }
+
+  // assign the resampled_particles to the previous particles
+  particles = resampled_particles;
+
+  // clear the weight vector for the next round
+  weights.clear();    
+}
 
 }
 
