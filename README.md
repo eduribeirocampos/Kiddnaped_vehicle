@@ -13,6 +13,9 @@
 [image11]: ./Support/particle_weight_formula.jpg
 [image12]: ./Support/particles_weight.jpg
 [image13]: ./Support/total_weight_formula.jpg
+[image14]: ./Support/Normalization_formula.jpg
+[image15]: ./Support/Simulator_interface.jpg
+[image16]: ./Support/success.jpg
 
 
 
@@ -202,3 +205,21 @@ The particles final weight will be calculated as the product of each partial wei
 *NOTE: You may find std::discrete_distribution helpful here.<br/>
 http://en.cppreference.com/w/cpp/numeric/random/discrete_distribution*
 
+With the individual particle weight  calculated in the previous function. here we will append in a unique vector named `weight`, all the weights in orther to normalize each particle weight. see the formula below:
+
+![alt text][image14]
+
+As second step, using the function `std::discrete_distribution` and `std::default_random_engine` we replace the particles vector taking account the highest probability of the each particle.
+
+# Reaching the goals !!
+
+Using the wokspace available in the class enviroment with support a GPU and a link to the simulator:
+
+![alt text][image15]
+
+
+We simulate the algorithm and receive a message if all the requirements are OK.
+
+**click on the picture to see an example video**
+
+[![alt text][image16]](https://www.youtube.com/watch?v=KV1M9-HSgcU)
