@@ -3,7 +3,7 @@
  *
  * Created on: Dec 12, 2016
  * Author: Tiffany Huang
-    Edited on: Jul 27, 2019
+    Edited on: Aug 08, 2019
    Eduardo Ribeiro de Campos
  
  */
@@ -226,7 +226,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 			int id_landmark = Landmarks_in_car_range[j].id;           
 			for (float k = 0 ; k < observations_transformed.size(); ++k){ 
           	//for (vector<float>::size_type k = 0; k < observations_transformed.size(); k++){          
-				int id_observed = observations_transformed[j].id; 
+				int id_observed = observations_transformed[k].id; 
 
 				if (id_observed == id_landmark){
 					double x_observed_coord = observations_transformed[k].x;
@@ -261,13 +261,13 @@ void ParticleFilter::resample() {
    */
     
     default_random_engine gen;
-  
+
 	// appending the particles weights in the main weights vector  
 	for ( int i = 0 ; i < num_particles ;++i){ 
       weights.push_back(particles[i].weight);
      }
 	// Calculating the total sum for main weights vector in order to normalize the individual particles weight
-   double partial_value;
+   double partial_value = 0;
    for (size_t i = 0; i < weights.size();++i){
      double ind_weight = weights[i];
      partial_value += ind_weight;
@@ -286,7 +286,7 @@ void ParticleFilter::resample() {
   // generate distribution according to normalized weights.  
   std::discrete_distribution <int> dist(main_weights_normalized.begin(), main_weights_normalized.end());
 
-  // create resampled particles
+  // step6 -create resampled particles vector
   vector<Particle> resampled_particles;
 
   // resample the particles according to weights
