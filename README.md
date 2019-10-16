@@ -222,4 +222,4 @@ We simulate the algorithm and receive a message if all the requirements are OK.
 
 **click on the picture to see an example video**
 
-[![alt text][image16]](https://www.youtube.com/watch?v=KV1M9-HSgcU)
+[![alt text][image16]](https://youtu.be/HLA7H9usUyE)
